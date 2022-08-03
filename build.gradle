@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.6.7'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'com.google.cloud.tools.jib' version '3.0.0'
+    id 'maven-publish'
+    id 'jacoco'
+}
+
+group 'com.techsophy.tsf'
+version '1.2.0'
+description = 'tp-cloud-config-server'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springCloudVersion', "2020.0.2")
+}
+
+ jib {
+	container {
+		jvmFlags = [
+				'-Dotel.exporter=jaeger',
+				'-Dotel.exporter.jaeger.endpoint=http://jaeger:14250',
+				'-Dotel.exporter.jaeger.service.name=cloud-config-server',
+				'-Dapplication.name=cloud-config-server',
+				'-javaagent:/opentelemetry-javaagent-all.jar'
+		]
+	}
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-config-server:3.1.2'
+}
+

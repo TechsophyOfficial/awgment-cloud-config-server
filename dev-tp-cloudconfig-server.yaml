@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-config-server
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cloud-config-server
+  template:
+    metadata:
+      labels:
+        name: cloud-config-server
+    spec:
+      containers:
+      - image: tsdevopsteam/platform:cloudconfig-server-$BUILD_NUMBER
+        name: cloud-config-server
+        envFrom:
+        - configMapRef:
+            name: cloudconfig-server-env
+
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: ts-platform
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-config-server
+  namespace: dev
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+  selector:
+    name: cloud-config-server

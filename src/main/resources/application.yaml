@@ -1,0 +1,13 @@
+server:
+  servlet:
+    context-path: /config-server
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${GIT_CONFIG_URI}
+          username: ${GIT_USERNAME}
+          password: ${GIT_PASSWORD}
+          default-label: dev
+
