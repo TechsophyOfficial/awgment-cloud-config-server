@@ -51,3 +51,4 @@ workflows:
   say-hello-workflow:
     jobs:
       - say-hello
+      - buildMS
