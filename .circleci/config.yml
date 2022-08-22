@@ -52,4 +52,7 @@ workflows:
   say-hello-workflow:
     jobs:
       - buildMS
-      - say-hello
+      - say-hello:
+          requires: 
+          - buildMS
+
