@@ -66,6 +66,7 @@ jobs:
           ls
           ls build
           docker --version
+          env
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -76,7 +77,5 @@ workflows:
       - packageMS:
           requires:
             - buildMS
-      - say-hello:
-          requires:
-            - packageMS
+      - say-hello
 
