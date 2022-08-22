@@ -16,7 +16,7 @@ jobs:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
           name: Install dependencies
-          command: ./gradlew build -x test
+          command: ./gradlew clean build
       - save_cache:
           paths:
             - ~/.gradle/wrapper
@@ -44,6 +44,7 @@ jobs:
       - run: |
           pwd
           ls
+          ls build
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
