@@ -10,8 +10,6 @@ jobs:
       - image: cimg/openjdk:11.0.11
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: false
       - restore_cache:
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
@@ -31,9 +29,27 @@ jobs:
           root: .
           paths:
             - build
+  packageMS:
+    docker:
+      - image: cimg/openjdk:11.0.11
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - run:
+          name: Install dependencies
+          command: ./gradlew bootJar
       - run:
           name: Build docker image
           command: docker build .
+            
+
   say-hello:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
@@ -59,5 +75,10 @@ workflows:
   say-hello-workflow:
     jobs:
       - buildMS
-      - say-hello
+      - packageMS:
+          requires:
+            - buildMS
+      - say-hello:
+          requires:
+            - packageMS
 
