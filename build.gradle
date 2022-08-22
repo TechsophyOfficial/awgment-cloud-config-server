@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-    id 'com.google.cloud.tools.jib' version '3.0.0'
     id 'maven-publish'
     id 'jacoco'
 }
@@ -19,17 +18,7 @@ ext {
     set('springCloudVersion', "2020.0.2")
 }
 
- jib {
-	container {
-		jvmFlags = [
-				'-Dotel.exporter=jaeger',
-				'-Dotel.exporter.jaeger.endpoint=http://jaeger:14250',
-				'-Dotel.exporter.jaeger.service.name=cloud-config-server',
-				'-Dapplication.name=cloud-config-server',
-				'-javaagent:/opentelemetry-javaagent-all.jar'
-		]
-	}
-}
+
 
 dependencyManagement {
     imports {
