@@ -16,7 +16,7 @@ jobs:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
           name: Install dependencies
-          command: ./gradlew clean build
+          command: ./gradlew clean check
       - save_cache:
           paths:
             - ~/.gradle/wrapper
@@ -28,6 +28,7 @@ jobs:
       - run: |
           ls
           ls build/*
+          ls build/libs/
       - persist_to_workspace:
           root: . 
           paths:
@@ -43,19 +44,20 @@ jobs:
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
-      # - run:
-      #     name: Install dependencies
-      #     command: ./gradlew bootJar
-      - attach_workspace:
-          at: build
+      - run:
+          name: Install dependencies
+          command: ./gradlew clean build
+      # - attach_workspace:
+      #     at: build
       - run: |
           pwd
           ls
           ls build/*
-      - run:
-          name: Build docker image
-          command: docker build .
-            
+      - run: |
+          docker build . -t cloud-config-server
+          docker tag cloud-config-server:latest cloud-config-server:$CIRCLE_TAG
+          docker push cloud-config-server:$CIRCLE_TAG
+
 
   say-hello:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
@@ -80,12 +82,14 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  branch-build:
+  tagged-release:
     jobs:
-      - buildMS
       - packageMS:
-          requires:
-            - buildMS
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
   # tagged-build:
   #   jobs:
   #     - buildMS:
