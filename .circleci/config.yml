@@ -83,15 +83,15 @@ workflows:
   branch-build:
     jobs:
       - buildMS
+      - packageMS:
+          requires:
+            - buildMS
   tagged-build:
     jobs:
       - buildMS:
           filters:
             tags:
               only: /v*.*/
-      - packageMS:
-          requires:
-            - buildMS
   main-build:
     jobs:
       - buildMS:
