@@ -52,7 +52,7 @@ jobs:
           pwd
           ls
           ls build/*
-          ls build/lib/*
+          ls build/libs/*
       - run:
           name: Build docker image
           command: docker build .
