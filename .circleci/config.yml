@@ -57,8 +57,8 @@ jobs:
           TAG=first_build
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker build . -t cloud-config-server
-          docker tag cloud-config-server:latest cloud-config-server:$TAG
-          docker push cloud-config-server:$TAG
+          docker tag cloud-config-server:latest $DOCKER_USER/cloud-config-server:$TAG
+          docker push $DOCKER_USER/cloud-config-server:$TAG
 
 
   say-hello:
