@@ -79,7 +79,7 @@ jobs:
       - run: |
           TAG=$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM
           echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-          REPONAME = $CIRCLE_PROJECT_REPONAME
+          REPONAME=$CIRCLE_PROJECT_REPONAME
           docker build . -t $DOCKER_USER/$REPONAME:$TAG
           #docker tag $REPONAME:latest $DOCKER_USER/$REPONAME:$TAG
           docker push $DOCKER_USER/$REPONAME:$TAG
