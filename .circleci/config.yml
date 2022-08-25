@@ -31,7 +31,7 @@ jobs:
       - persist_to_workspace:
           root: . 
           paths:
-            - build
+            - build/libs
   packageMS:
     docker:
       - image: cimg/openjdk:11.0.11
@@ -51,7 +51,7 @@ jobs:
       - run: |
           pwd
           ls
-          ls build/
+          ls build/*
       - run:
           name: Build docker image
           command: docker build .
