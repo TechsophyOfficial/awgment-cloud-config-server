@@ -40,9 +40,14 @@ jobs:
           key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
       - restore_cache:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
-      - run:
-          name: Install dependencies
-          command: ./gradlew bootJar
+      # - run:
+      #     name: Install dependencies
+      #     command: ./gradlew bootJar
+      - attach_workspace:
+          at: build
+      - run: |
+          pwd
+          ls
       - run:
           name: Build docker image
           command: docker build .
@@ -71,11 +76,23 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
+  branch-build:
     jobs:
       - buildMS
+  tagged-build:
+    jobs:
+      - buildMS:
+          filters:
+            tags:
+              only: /v*.*/
       - packageMS:
           requires:
             - buildMS
-      - say-hello
+  main-build:
+    jobs:
+      - buildMS:
+          filters:
+            branches:
+              only:
+                - main
 
