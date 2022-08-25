@@ -54,9 +54,11 @@ jobs:
           ls
           ls build/*
       - run: |
+          TAG=first_build
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
           docker build . -t cloud-config-server
-          docker tag cloud-config-server:latest cloud-config-server:${CIRCLE_TAG}
-          docker push cloud-config-server:$CIRCLE_TAG
+          docker tag cloud-config-server:latest cloud-config-server:$TAG
+          docker push cloud-config-server:$TAG
 
 
   say-hello:
