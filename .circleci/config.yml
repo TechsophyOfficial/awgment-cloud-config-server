@@ -55,7 +55,7 @@ jobs:
           ls build/*
       - run: |
           docker build . -t cloud-config-server
-          docker tag cloud-config-server:latest cloud-config-server:$CIRCLE_TAG
+          docker tag cloud-config-server:latest cloud-config-server:${CIRCLE_TAG}
           docker push cloud-config-server:$CIRCLE_TAG
 
 
@@ -88,8 +88,7 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-            branches:
-              ignore: /.*/
+
   # tagged-build:
   #   jobs:
   #     - buildMS:
