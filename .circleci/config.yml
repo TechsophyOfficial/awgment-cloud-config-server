@@ -27,7 +27,7 @@ jobs:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
       - run: |
           ls
-
+          ls build/*
       - persist_to_workspace:
           root: . 
           paths:
@@ -86,17 +86,17 @@ workflows:
       - packageMS:
           requires:
             - buildMS
-  tagged-build:
-    jobs:
-      - buildMS:
-          filters:
-            tags:
-              only: /v*.*/
-  main-build:
-    jobs:
-      - buildMS:
-          filters:
-            branches:
-              only:
-                - main
+  # tagged-build:
+  #   jobs:
+  #     - buildMS:
+  #         filters:
+  #           tags:
+  #             only: /v*.*/
+  # main-build:
+  #   jobs:
+  #     - buildMS:
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
 
