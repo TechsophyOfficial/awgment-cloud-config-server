@@ -33,33 +33,6 @@ jobs:
           root: . 
           paths:
             - build/libs
-  packageMS:
-    docker:
-      - image: cimg/openjdk:11.0.11
-    steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: false
-      - restore_cache:
-          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-      - restore_cache:
-          key: v1-gradle-cache-{{ checksum "build.gradle" }}
-      - run:
-          name: Install dependencies
-          command: ./gradlew clean build
-      # - attach_workspace:
-      #     at: build
-      - run: |
-          pwd
-          ls
-          ls build/*
-      - run: |
-          TAG=first_build
-          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-          docker build . -t cloud-config-server
-          docker tag cloud-config-server:latest $DOCKER_USER/cloud-config-server:$TAG
-          docker push $DOCKER_USER/cloud-config-server:$TAG
-
 
   say-hello:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
@@ -81,12 +54,73 @@ jobs:
           docker --version
           env
 
+
+
+  packageMS:
+    docker:
+      - image: cimg/openjdk:11.0.11
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - run:
+          name: Install dependencies
+          command: ./gradlew clean build
+      # - attach_workspace:
+      #     at: build
+      - run: |
+          pwd
+          ls
+          ls build/*
+      - run: |
+          TAG=$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          REPONAME = $CIRCLE_PROJECT_REPONAME
+          docker build . -t $DOCKER_USER/$REPONAME:$TAG
+          #docker tag $REPONAME:latest $DOCKER_USER/$REPONAME:$TAG
+          docker push $DOCKER_USER/$REPONAME:$TAG
+
+
+  releaseMS:
+    docker:
+      - image: cimg/openjdk:11.0.11
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - run:
+          name: Install dependencies
+          command: ./gradlew clean build
+      # - attach_workspace:
+      #     at: build
+      - run: |
+          pwd
+          ls
+          ls build/*
+      - run: |
+          if [[ -z "$CIRCLE_TAG" ]] ;  then exit 1; fi
+          TAG=$CIRCLE_TAG
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          REPONAME = $CIRCLE_PROJECT_REPONAME
+          docker build . -t $DOCKER_USER/$REPONAME:$TAG
+          #docker tag $REPONAME:latest $DOCKER_USER/$REPONAME:$TAG
+          docker push $DOCKER_USER/$REPONAME:$TAG
+
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   tagged-release:
     jobs:
-      - packageMS:
+      - releaseMS:
           filters:
             tags:
               only: /^v.*/
