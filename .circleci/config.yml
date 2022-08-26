@@ -34,8 +34,8 @@ jobs:
       - run: |
           if [[ -z "$CIRCLE_TAG" ]] ;  then exit 1; fi
           TAG=$CIRCLE_TAG
-          echo $PUBLIC_DOCKER_PASS | docker login -u $PUBLIC_DOCKER_USER --password-stdin
-          REPONAME=$PUBLIC_DOCKER_USER/$CIRCLE_PROJECT_REPONAME
+          echo $TS_DOCKER_PUB_PASS | docker login -u $TS_DOCKER_PUB_USR --password-stdin
+          REPONAME=$TS_DOCKER_PUB_USR/$CIRCLE_PROJECT_REPONAME
           docker build . -t $REPONAME:$TAG
           #docker tag $REPONAME:latest $REPONAME:$TAG
           docker push $REPONAME:$TAG
