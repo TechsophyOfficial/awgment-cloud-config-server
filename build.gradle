@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.4.5'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'org.springframework.boot' version '3.3.3'
+    id 'io.spring.dependency-management' version '1.1.6'  // Update for compatibility with Spring Boot 3.x
     id 'maven-publish'
     id 'jacoco'
 }
@@ -13,11 +13,10 @@ description = 'tp-cloud-config-server'
 repositories {
     mavenCentral()
 }
+
 ext {
-    set('springCloudVersion', "2020.0.1")
+    set('springCloudVersion', "2023.0.3")  // Compatible with Spring Boot 3.x
 }
-
-
 
 dependencyManagement {
     imports {
@@ -26,6 +25,11 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.4.5'
-    implementation 'org.springframework.cloud:spring-cloud-config-server:3.0.3'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-config-server'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()  // Ensure compatibility with JUnit 5
 }
